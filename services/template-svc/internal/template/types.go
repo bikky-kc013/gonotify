@@ -1,6 +1,10 @@
 package template
 
-import "time"
+import (
+	"time"
+
+	_ "github.com/bikky-kc013/notification-system/pkg/domain"
+)
 
 type Template struct {
 	ID        string    `json:"id"`

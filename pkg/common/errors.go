@@ -1,4 +1,4 @@
-// Package common provides application-level error types shared across the codebase.
+// Package common
 package common
 
 import (
@@ -44,6 +44,7 @@ const (
 	ErrCodeInternal           = "INTERNAL_ERROR"
 	ErrCodeServiceUnavailable = "SERVICE_UNAVAILABLE"
 	ErrCodeRateLimited        = "RATE_LIMITED"
+	ErrRouteNotFound          = "ROUTE_NOT_FOUND"
 )
 
 // AppError is the application-level error type. It carries an HTTP status,
@@ -111,6 +112,9 @@ func NewBadRequestError(message string, err error) *AppError {
 
 func NewInternalError(message string, err error) *AppError {
 	return New(http.StatusInternalServerError, ErrCodeInternal, message, orDefault(err, ErrInternalServer))
+}
+func NewRouteNotFoundError(message string, err error) *AppError {
+	return New(http.StatusNotFound, ErrRouteNotFound, message, err)
 }
 
 func NewInternalServerError(message string) *AppError {

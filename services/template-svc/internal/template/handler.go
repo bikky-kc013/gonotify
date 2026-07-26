@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/bikky-kc013/notification-system/pkg/common"
 	"github.com/labstack/echo/v5"
 	"go.uber.org/zap"
 )
@@ -31,12 +32,12 @@ func (h *Handler) RegisterRoutes(g *echo.Group) {
 func (h *Handler) Create(c *echo.Context) error {
 	var req CreateTemplateRequest
 	if err := c.Bind(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return common.NewBadRequestError("invalid request body", err)
 	}
 	resp, err := h.svc.Create(c.Request().Context(), req)
 	if err != nil {
 		h.log.Error("create template failed", zap.Error(err))
-		return echo.NewHTTPError(http.StatusInternalServerError, "create template failed")
+		return common.NewInternalError("create template failed", err)
 	}
 
 	return c.JSON(http.StatusCreated, resp)
@@ -45,23 +46,23 @@ func (h *Handler) Create(c *echo.Context) error {
 func (h *Handler) Update(c *echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "template id is required")
+		return common.NewBadRequestError("template id is required", nil)
 	}
 
 	var req UpdateTemplateRequest
 	if err := c.Bind(&req); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid request body")
+		return common.NewBadRequestError("invalid request body", err)
 	}
 	resp, err := h.svc.Update(c.Request().Context(), id, req)
 	if err != nil {
 		if errors.Is(err, ErrTemplateNotFound) {
-			return echo.NewHTTPError(http.StatusNotFound, "template not found")
+			return common.NewNotFoundError("template not found", err)
 		}
 		if errors.Is(err, ErrConcurrentUpdate) {
-			return echo.NewHTTPError(http.StatusConflict, "concurrent update detected, retry")
+			return common.NewConflictError("concurrent update detected, retry")
 		}
 		h.log.Error("update template failed", zap.Error(err))
-		return echo.NewHTTPError(http.StatusInternalServerError, "update template failed")
+		return common.NewInternalError("update template failed", err)
 	}
 
 	return c.JSON(http.StatusOK, resp)
@@ -70,16 +71,16 @@ func (h *Handler) Update(c *echo.Context) error {
 func (h *Handler) GetActive(c *echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "template id is required")
+		return common.NewBadRequestError("template id is required", nil)
 	}
 
 	resp, err := h.svc.GetActive(c.Request().Context(), id)
 	if err != nil {
 		if errors.Is(err, ErrTemplateNotFound) {
-			return echo.NewHTTPError(http.StatusNotFound, "template not found")
+			return common.NewNotFoundError("template not found", err)
 		}
 		h.log.Error("get template failed", zap.Error(err))
-		return echo.NewHTTPError(http.StatusInternalServerError, "get template failed")
+		return common.NewInternalError("get template failed", err)
 	}
 
 	return c.JSON(http.StatusOK, resp)
@@ -88,21 +89,21 @@ func (h *Handler) GetActive(c *echo.Context) error {
 func (h *Handler) GetVersion(c *echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "template id is required")
+		return common.NewBadRequestError("template id is required", nil)
 	}
 
 	version, err := strconv.Atoi(c.Param("version"))
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "invalid version")
+		return common.NewBadRequestError("invalid version", err)
 	}
 
 	resp, err := h.svc.GetVersion(c.Request().Context(), id, version)
 	if err != nil {
 		if errors.Is(err, ErrTemplateNotFound) {
-			return echo.NewHTTPError(http.StatusNotFound, "template not found")
+			return common.NewNotFoundError("template not found", err)
 		}
 		h.log.Error("get template version failed", zap.Error(err))
-		return echo.NewHTTPError(http.StatusInternalServerError, "get template version failed")
+		return common.NewInternalError("get template version failed", err)
 	}
 
 	return c.JSON(http.StatusOK, resp)
@@ -115,7 +116,7 @@ func (h *Handler) List(c *echo.Context) error {
 	resp, err := h.svc.List(c.Request().Context(), limit, cursor)
 	if err != nil {
 		h.log.Error("list templates failed", zap.Error(err))
-		return echo.NewHTTPError(http.StatusInternalServerError, "list templates failed")
+		return common.NewInternalError("list templates failed", err)
 	}
 
 	return c.JSON(http.StatusOK, resp)
@@ -124,15 +125,15 @@ func (h *Handler) List(c *echo.Context) error {
 func (h *Handler) Deactivate(c *echo.Context) error {
 	id := c.Param("id")
 	if id == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "template id is required")
+		return common.NewBadRequestError("template id is required", nil)
 	}
 
 	if err := h.svc.Deactivate(c.Request().Context(), id); err != nil {
 		if errors.Is(err, ErrTemplateNotFound) {
-			return echo.NewHTTPError(http.StatusNotFound, "template not found")
+			return common.NewNotFoundError("template not found", err)
 		}
 		h.log.Error("deactivate template failed", zap.Error(err))
-		return echo.NewHTTPError(http.StatusInternalServerError, "deactivate template failed")
+		return common.NewInternalError("deactivate template failed", err)
 	}
 
 	return c.NoContent(http.StatusNoContent)

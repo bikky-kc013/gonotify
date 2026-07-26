@@ -1,3 +1,6 @@
 go 1.26.3
 
-use ./services/template-svc
+use (
+	./pkg
+	./services/template-svc
+)

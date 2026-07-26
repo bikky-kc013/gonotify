@@ -8,8 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"notification-service/services/template-svc/internal/platform/postgres"
-
+	"github.com/bikky-kc013/notification-system/pkg/database"
 	"gorm.io/gorm"
 )
 
@@ -79,10 +78,10 @@ func toDomain(m templateModel) Template {
 }
 
 type PGStore struct {
-	db *postgres.Database
+	db *database.Database
 }
 
-func NewPGStore(db *postgres.Database) *PGStore {
+func NewPGStore(db *database.Database) *PGStore {
 	return &PGStore{db: db}
 }
 
@@ -125,7 +124,7 @@ func (s *PGStore) GetVersion(ctx context.Context, id string, version int) (Templ
 }
 
 func (s *PGStore) CreateNewVersion(ctx context.Context, next Template) error {
-	return s.db.WithTxn(ctx, func(tx *postgres.Database) error {
+	return s.db.WithTxn(ctx, func(tx *database.Database) error {
 		res := tx.Model(&templateModel{}).
 			Where("template_id = ? AND is_active = ?", next.ID, true).
 			Update("is_active", false)

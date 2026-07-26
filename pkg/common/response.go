@@ -1,10 +1,11 @@
+// Package common
 package common
 
 import (
 	"net/http"
-	"notification-service/pkg/logger"
 
-	"github.com/labstack/echo"
+	"github.com/bikky-kc013/notification-system/pkg/logger"
+	"github.com/labstack/echo/v5"
 )
 
 // Response represents a standard API response
@@ -33,7 +34,7 @@ type Meta struct {
 }
 
 // SuccessResponse sends a successful response (backward compatibility)
-func SuccessResponse(c echo.Context, data interface{}) error {
+func SuccessResponse(c *echo.Context, data interface{}) error {
 	return c.JSON(http.StatusOK, Response{
 		Success: true,
 		Data:    data,
@@ -41,7 +42,7 @@ func SuccessResponse(c echo.Context, data interface{}) error {
 }
 
 // SuccessResponseWithStatus sends a successful response with custom status code
-func SuccessResponseWithStatus(c echo.Context, statusCode int, data interface{}, message string) error {
+func SuccessResponseWithStatus(c *echo.Context, statusCode int, data interface{}, message string) error {
 	return c.JSON(statusCode, Response{
 		Success: true,
 		Data:    data,
@@ -49,7 +50,7 @@ func SuccessResponseWithStatus(c echo.Context, statusCode int, data interface{},
 }
 
 // SuccessResponseWithMeta sends a successful response with metadata
-func SuccessResponseWithMeta(c echo.Context, data interface{}, meta *Meta) error {
+func SuccessResponseWithMeta(c *echo.Context, data interface{}, meta *Meta) error {
 	return c.JSON(http.StatusOK, Response{
 		Success: true,
 		Data:    data,
@@ -58,7 +59,7 @@ func SuccessResponseWithMeta(c echo.Context, data interface{}, meta *Meta) error
 }
 
 // SuccessResponseWithMetaAndStatus sends a successful response with metadata and status
-func SuccessResponseWithMetaAndStatus(c echo.Context, statusCode int, data interface{}, meta *Meta, message string) error {
+func SuccessResponseWithMetaAndStatus(c *echo.Context, statusCode int, data interface{}, meta *Meta, message string) error {
 	return c.JSON(statusCode, Response{
 		Success: true,
 		Data:    data,
@@ -67,7 +68,7 @@ func SuccessResponseWithMetaAndStatus(c echo.Context, statusCode int, data inter
 }
 
 // CreatedResponse sends a created response
-func CreatedResponse(c echo.Context, data interface{}) error {
+func CreatedResponse(c *echo.Context, data interface{}) error {
 	return c.JSON(http.StatusCreated, Response{
 		Success: true,
 		Data:    data,
@@ -75,7 +76,7 @@ func CreatedResponse(c echo.Context, data interface{}) error {
 }
 
 // ErrorResponse sends an error response
-func ErrorResponse(c echo.Context, statusCode int, message string) error {
+func ErrorResponse(c *echo.Context, statusCode int, message string) error {
 	return c.JSON(statusCode, Response{
 		Success: false,
 		Error: &ErrorInfo{
@@ -88,7 +89,7 @@ func ErrorResponse(c echo.Context, statusCode int, message string) error {
 
 // NoRouteHandler returns an echo.HandlerFunc for unregistered routes (404)
 func NoRouteHandler() echo.HandlerFunc {
-	return func(c echo.Context) error {
+	return func(c *echo.Context) error {
 		return c.JSON(http.StatusNotFound, Response{
 			Success: false,
 			Error: &ErrorInfo{
@@ -103,7 +104,7 @@ func NoRouteHandler() echo.HandlerFunc {
 
 // NoMethodHandler returns an echo.HandlerFunc for unsupported methods (405)
 func NoMethodHandler() echo.HandlerFunc {
-	return func(c echo.Context) error {
+	return func(c *echo.Context) error {
 		return c.JSON(http.StatusMethodNotAllowed, Response{
 			Success: false,
 			Error: &ErrorInfo{
@@ -116,7 +117,7 @@ func NoMethodHandler() echo.HandlerFunc {
 }
 
 // AppErrorResponse sends an AppError response
-func AppErrorResponse(c echo.Context, err *AppError) error {
+func AppErrorResponse(c *echo.Context, err *AppError) error {
 	return c.JSON(err.Code, Response{
 		Success: false,
 		Error: &ErrorInfo{

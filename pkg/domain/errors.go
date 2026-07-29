@@ -13,4 +13,5 @@ var (
 	ErrInvalidTransition    = errors.New("invalid status transition")
 	ErrDuplicateDelivery    = errors.New("delivery already recorded, idempotent skip")
 	ErrRateLimited          = errors.New("rate limited, retry later")
+	ErrConcurrentUpdate     = errors.New("concurrent update detected, retry")
 )

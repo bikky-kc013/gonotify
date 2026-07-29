@@ -1,3 +1,4 @@
+// Package pagination
 package pagination
 
 import (

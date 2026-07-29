@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/bikky-kc013/notification-system/pkg/database"
+	"github.com/bikky-kc013/notification-system/pkg/domain"
 	"gorm.io/gorm"
 )
 
@@ -100,7 +101,7 @@ func (s *PGStore) GetActive(ctx context.Context, id string) (Template, error) {
 		First(&m).Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return Template{}, ErrTemplateNotFound
+		return Template{}, domain.ErrTemplateNotFound
 	}
 	if err != nil {
 		return Template{}, fmt.Errorf("get active template: %w", err)
@@ -115,7 +116,7 @@ func (s *PGStore) GetVersion(ctx context.Context, id string, version int) (Templ
 		First(&m).Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return Template{}, ErrTemplateNotFound
+		return Template{}, domain.ErrTemplateNotFound
 	}
 	if err != nil {
 		return Template{}, fmt.Errorf("get template version: %w", err)
@@ -133,13 +134,13 @@ func (s *PGStore) CreateNewVersion(ctx context.Context, next Template) error {
 			return fmt.Errorf("deactivate current version: %w", res.Error)
 		}
 		if res.RowsAffected == 0 {
-			return ErrTemplateNotFound
+			return domain.ErrTemplateNotFound
 		}
 
 		m := toModel(next)
 		if err := tx.Create(&m).Error; err != nil {
 			if isUniqueViolation(err) {
-				return ErrConcurrentUpdate
+				return domain.ErrConcurrentUpdate
 			}
 			return fmt.Errorf("insert new version: %w", err)
 		}
@@ -157,7 +158,7 @@ func (s *PGStore) Deactivate(ctx context.Context, id string) error {
 		return fmt.Errorf("deactivate template: %w", res.Error)
 	}
 	if res.RowsAffected == 0 {
-		return ErrTemplateNotFound
+		return domain.ErrTemplateNotFound
 	}
 	return nil
 }

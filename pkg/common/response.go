@@ -19,9 +19,14 @@ type Response struct {
 
 // ErrorInfo contains error details
 type ErrorInfo struct {
-	Code      int    `json:"code"`
-	ErrorCode string `json:"error_code,omitempty"`
-	Message   string `json:"message"`
+	Code      int          `json:"code"`
+	ErrorCode string       `json:"error_code,omitempty"`
+	Message   string       `json:"message"`
+	Fields    []FieldError `json:"fields,omitempty"`
+}
+type FieldError struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
 }
 
 // Meta contains metadata for paginated responses
@@ -124,6 +129,20 @@ func AppErrorResponse(c *echo.Context, err *AppError) error {
 			Code:      err.Code,
 			ErrorCode: err.ErrorCode,
 			Message:   err.Message,
+		},
+		CorrelationID: logger.CorrelationIDFromContext(c.Request().Context()),
+	})
+}
+
+// ValidationErrorResponse sends a 400 response with field-level errors
+func ValidationErrorResponse(c *echo.Context, fields []FieldError) error {
+	return c.JSON(http.StatusBadRequest, Response{
+		Success: false,
+		Error: &ErrorInfo{
+			Code:      http.StatusBadRequest,
+			ErrorCode: ErrCodeValidation,
+			Message:   "validation failed",
+			Fields:    fields,
 		},
 		CorrelationID: logger.CorrelationIDFromContext(c.Request().Context()),
 	})

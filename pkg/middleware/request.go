@@ -39,6 +39,7 @@ func RequestLoggerMiddleware(logger *zap.Logger) echo.MiddlewareFunc {
 				return err
 			}
 
+			logger.Info("HTTP Request", fields...)
 			return err
 		}
 	}

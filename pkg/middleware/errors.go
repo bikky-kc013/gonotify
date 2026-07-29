@@ -11,9 +11,12 @@ import (
 
 func NewErrorHandler(log *zap.Logger, isProduction bool) echo.HTTPErrorHandler {
 	return func(c *echo.Context, err error) {
-		_, status := echo.ResolveResponseStatus(c.Response(), err)
 
-		status = echo.StatusCode(err)
+		resp, ok := c.Response().(*echo.Response)
+		if ok && resp.Committed {
+			return
+		}
+		status := echo.StatusCode(err)
 		if status == 0 {
 			status = http.StatusInternalServerError
 		}

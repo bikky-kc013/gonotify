@@ -7,6 +7,8 @@ import (
 	"strconv"
 
 	"github.com/bikky-kc013/notification-system/pkg/common"
+	"github.com/bikky-kc013/notification-system/pkg/domain"
+	"github.com/bikky-kc013/notification-system/pkg/middleware"
 	"github.com/labstack/echo/v5"
 	"go.uber.org/zap"
 )
@@ -31,8 +33,8 @@ func (h *Handler) RegisterRoutes(g *echo.Group) {
 
 func (h *Handler) Create(c *echo.Context) error {
 	var req CreateTemplateRequest
-	if err := c.Bind(&req); err != nil {
-		return common.NewBadRequestError("invalid request body", err)
+	if err := middleware.ValidateAndBind(c, &req); err != nil {
+		return err
 	}
 	resp, err := h.svc.Create(c.Request().Context(), req)
 	if err != nil {
@@ -55,10 +57,10 @@ func (h *Handler) Update(c *echo.Context) error {
 	}
 	resp, err := h.svc.Update(c.Request().Context(), id, req)
 	if err != nil {
-		if errors.Is(err, ErrTemplateNotFound) {
+		if errors.Is(err, domain.ErrTemplateNotFound) {
 			return common.NewNotFoundError("template not found", err)
 		}
-		if errors.Is(err, ErrConcurrentUpdate) {
+		if errors.Is(err, domain.ErrConcurrentUpdate) {
 			return common.NewConflictError("concurrent update detected, retry")
 		}
 		h.log.Error("update template failed", zap.Error(err))
@@ -76,7 +78,7 @@ func (h *Handler) GetActive(c *echo.Context) error {
 
 	resp, err := h.svc.GetActive(c.Request().Context(), id)
 	if err != nil {
-		if errors.Is(err, ErrTemplateNotFound) {
+		if errors.Is(err, domain.ErrTemplateNotFound) {
 			return common.NewNotFoundError("template not found", err)
 		}
 		h.log.Error("get template failed", zap.Error(err))
@@ -99,7 +101,7 @@ func (h *Handler) GetVersion(c *echo.Context) error {
 
 	resp, err := h.svc.GetVersion(c.Request().Context(), id, version)
 	if err != nil {
-		if errors.Is(err, ErrTemplateNotFound) {
+		if errors.Is(err, domain.ErrTemplateNotFound) {
 			return common.NewNotFoundError("template not found", err)
 		}
 		h.log.Error("get template version failed", zap.Error(err))
@@ -129,7 +131,7 @@ func (h *Handler) Deactivate(c *echo.Context) error {
 	}
 
 	if err := h.svc.Deactivate(c.Request().Context(), id); err != nil {
-		if errors.Is(err, ErrTemplateNotFound) {
+		if errors.Is(err, domain.ErrTemplateNotFound) {
 			return common.NewNotFoundError("template not found", err)
 		}
 		h.log.Error("deactivate template failed", zap.Error(err))

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/bikky-kc013/notification-system/pkg/common"
+	"github.com/bikky-kc013/notification-system/shared/common"
 	"github.com/labstack/echo/v5"
 	"go.uber.org/zap"
 )

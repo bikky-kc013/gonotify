@@ -7,9 +7,9 @@ import (
 	"reflect"
 	"sort"
 
-	"github.com/bikky-kc013/notification-system/pkg/common"
-	"github.com/bikky-kc013/notification-system/pkg/logger"
-	"github.com/bikky-kc013/notification-system/pkg/validation"
+	"github.com/bikky-kc013/notification-system/shared/common"
+	"github.com/bikky-kc013/notification-system/shared/logger"
+	"github.com/bikky-kc013/notification-system/shared/validation"
 	"github.com/labstack/echo/v5"
 )
 
@@ -131,27 +131,6 @@ func GetValidatedRequest(c *echo.Context) (interface{}, bool) {
 	req := c.Get("validatedRequest")
 	return req, req != nil
 }
-
-// Example usage in handler:
-/*
-func CreateRideHandler(c echo.Context) error {
-	var req validation.CreateRideRequest
-
-	// Method 1: Using ValidateAndBind helper
-	if err := middleware.ValidateAndBind(c, &req); err != nil {
-		return err // Error response already sent
-	}
-
-	// Or Method 2: Manual validation
-	if err := middleware.ValidateJSON(c, &req); err != nil {
-		return middleware.RespondWithValidationError(c, err)
-	}
-
-	// Process the validated request
-	// ...
-	return nil
-}
-*/
 
 // ValidateContentType ensures the request has the expected content type
 func ValidateContentType(contentType string) echo.MiddlewareFunc {

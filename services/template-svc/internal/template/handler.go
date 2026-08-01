@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/bikky-kc013/notification-system/pkg/common"
-	"github.com/bikky-kc013/notification-system/pkg/domain"
-	"github.com/bikky-kc013/notification-system/pkg/middleware"
+	"github.com/bikky-kc013/notification-system/shared/common"
+	"github.com/bikky-kc013/notification-system/shared/domain"
+	"github.com/bikky-kc013/notification-system/shared/middleware"
 	"github.com/labstack/echo/v5"
 	"go.uber.org/zap"
 )

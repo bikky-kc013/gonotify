@@ -2,8 +2,6 @@ package template
 
 import (
 	"time"
-
-	_ "github.com/bikky-kc013/notification-system/pkg/domain"
 )
 
 type Template struct {

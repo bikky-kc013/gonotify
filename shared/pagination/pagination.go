@@ -4,7 +4,7 @@ package pagination
 import (
 	"math"
 
-	"github.com/bikky-kc013/notification-system/pkg/common"
+	"github.com/bikky-kc013/notification-system/shared/common"
 	"github.com/labstack/echo/v5"
 )
 

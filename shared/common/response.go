@@ -4,7 +4,7 @@ package common
 import (
 	"net/http"
 
-	"github.com/bikky-kc013/notification-system/pkg/logger"
+	"github.com/bikky-kc013/notification-system/shared/logger"
 	"github.com/labstack/echo/v5"
 )
 

@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bikky-kc013/notification-system/pkg/database"
-	"github.com/bikky-kc013/notification-system/pkg/domain"
+	"github.com/bikky-kc013/notification-system/shared/database"
+	"github.com/bikky-kc013/notification-system/shared/domain"
 	"gorm.io/gorm"
 )
 

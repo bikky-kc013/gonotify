@@ -1,4 +1,3 @@
-// Package server
 package server
 
 import (
@@ -21,10 +20,10 @@ type Server struct {
 func New(cfg *config.Config, logger *zap.Logger, db *database.DBConnection) *Server {
 	e := echo.New()
 	s := &Server{
-		Echo:   e,
+		cfg:    cfg,
 		logger: logger,
 		db:     db,
-		cfg:    cfg,
+		Echo:   e,
 	}
 	s.registerMiddlewares()
 	return s
@@ -37,7 +36,7 @@ func (s *Server) registerMiddlewares() {
 }
 
 func (s *Server) Start(ctx context.Context) error {
-	s.logger.Info("Starting server", zap.String("port", s.cfg.Port))
+	s.logger.Info("starting server", zap.String("port", s.cfg.Port))
 	sc := echo.StartConfig{
 		Address:    s.cfg.Port,
 		HideBanner: true,

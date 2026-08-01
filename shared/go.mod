@@ -1,4 +1,4 @@
-module github.com/bikky-kc013/notification-system/pkg
+module github.com/bikky-kc013/notification-system/shared
 
 go 1.26.3
 
